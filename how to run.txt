@@ -1,0 +1,7 @@
+Hi,
+
+Inorder to run the scripts attached. You need to make sure the library files in 'requirements.txt' are installed. Easy what to do this is:
+
+pip install -r requirements.txt
+
+In order to run the whole program run the runMe.py file
