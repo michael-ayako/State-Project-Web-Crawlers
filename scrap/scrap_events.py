@@ -41,7 +41,7 @@ class events:
 
     def __main__(self):
         try:
-            self.events_data = pd.read_json('./data/events_data.json')
+            self.events_data = pd.read_json('../data/events_data.json')
         except:
             print("Fetching Event Data....")
             self.fetch_events()

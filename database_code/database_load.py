@@ -188,21 +188,22 @@ class database_load:
 
 
 
+
     def __main__(self):
         try:
             print('loading course names to database...')
-            self.subject_name_data = pd.read_json('./data/subject_name_data.json')
+            self.subject_name_data = pd.read_json('../data/subject_name_data.json')
             self.load_course_names()
             print('loading faculty information to database...')
-            self.faculty_data = pd.read_json('./data/faculty_data.json')
+            self.faculty_data = pd.read_json('../data/faculty_data.json')
             self.load_faculty()
             print('loading course information to database...')
-            self.course_data = pd.read_json('./data/course_data.json')
+            self.course_data = pd.read_json('../data/course_data.json')
             self.load_courses()
             print('loading section information to database...')
             self.load_sections()
             print('loading event data to database')
-            self.events_data = pd.read_json('./data/events_data.json')
+            self.events_data = pd.read_json('../data/events_data.json')
             self.load_events()
 
         except Exception as err:

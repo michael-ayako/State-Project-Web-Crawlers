@@ -42,12 +42,12 @@ class faculty:
 
     def __main__(self):
         try:
-            os.mkdir('data')
+            os.mkdir('../data')
             print("Data folder created")
         except:
             pass
         try:
-            self.faculty_data = pd.read_json('./data/faculty_data.json')
+            self.faculty_data = pd.read_json('../data/faculty_data.json')
         except:
             print("Fetching faculty data...")
             self.fetch_faculty()

@@ -3,7 +3,7 @@ import requests
 from static import static
 import pandas as pd
 from tqdm import tqdm
-from course_name_scrap import course_names
+from scrap.course_name_scrap import course_names
 
 
 class courses:
@@ -153,14 +153,14 @@ class courses:
 
     def __main__(self):
         try:
-            self.subject_name_data = pd.read_json('./data/subject_name_data.json')
-            self.course_data = pd.read_json('./data/course_data.json')
+            self.subject_name_data = pd.read_json('../data/subject_name_data.json')
+            self.course_data = pd.read_json('../data/course_data.json')
         except:
             if len(self.subject_name_data) == 0:
                 print('fetching course names')
                 cs = course_names()
                 cs.fetch_course_names()
-                self.subject_name_data = pd.read_json('./data/subject_name_data.json')
+                self.subject_name_data = pd.read_json('../data/subject_name_data.json')
             if len(self.course_data) == 0:
                 print('fetching course data...')
                 self.fetch_course_data()

@@ -4,7 +4,8 @@ import pandas as pd
 from static import static
 
 class course_names:
-    def __init__(self):
+    def __init__(self, logger):
+        self.logger = logger
         self.subject_name_data = []
 
     def campusid_constructor(self,len,campusid):
@@ -49,8 +50,4 @@ class course_names:
         data.to_json('./data/subject_name_data.json')
 
     def __main__(self):
-        try:
-            self.subject_name_data = pd.read_json('./data/subject_name_data.json')
-        except:
-            print('fetching course names...')
             self.fetch_course_names()
