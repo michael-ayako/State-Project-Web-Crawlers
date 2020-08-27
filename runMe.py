@@ -1,11 +1,9 @@
-
 from database_code.database_load import database_load
-
 from scrap.ZZmain import scrap_handler
 import logging
-import logging.config
 import os.path as path
 import os
+from termcolor import colored
 import datetime
 
 
@@ -17,19 +15,23 @@ def __main__():
     filename = './logs/{}.log'.format(date)
     if path.exists("logs")==False :
         os.mkdir("logs")
+        print(colored("Logs folder created",'yellow'))
+    if path.exists("data")==False :
+        os.mkdir("data")
+        print(colored("data folder created",'yellow'))
+
     logging.basicConfig(format='%(asctime)s -   %(levelname)s   -   %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S',
                         filename=filename,
                         level=logging.DEBUG)
-    print("The program started at {} {}".format(date,time))
-    logging.info("The program started at {} {}".format(date,time))
+    print(colored("The program started at {} {}".format(date, time), 'green'))
+    logging.info("The program started at {} {}".format(date, time))
 
     scrap = scrap_handler(logging)
     scrap.__main__()
 
 
-    # fs = faculty()
-    # fs.__main__()
+
     # cn = course_names()
     # cn.__main__()
     # cs = courses()

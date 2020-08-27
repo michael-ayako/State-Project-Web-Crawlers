@@ -2,11 +2,12 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 from static import static
+from tqdm import tqdm
+import sys
 
 class course_names:
     def __init__(self, logger):
         self.logger = logger
-        self.subject_name_data = []
 
     def campusid_constructor(self,len,campusid):
         if len == 3:
@@ -26,7 +27,7 @@ class course_names:
             subjectpage = requests.get(url)
             parsedpage = BeautifulSoup(subjectpage.text, 'html.parser')
             courses = parsedpage.find('select', id='subject').find_all('option')
-            for course in courses:
+            for course in tqdm(courses):
                 abbrev = course['value']
                 if abbrev == "":
                     pass
@@ -45,9 +46,23 @@ class course_names:
             for i in jsonlist:
                 subjectnames.append([i['value'], i['original'],x])
 
+        return subjectnames
 
-        data = pd.DataFrame(data=subjectnames, columns=['abbrev','fullname','campus_id'])
-        data.to_json('./data/subject_name_data.json')
+
 
     def __main__(self):
-            self.fetch_course_names()
+        err = True
+        try:
+            data = self.fetch_course_names()
+        except Exception as expt:
+            err = False
+            self.logger.critical("Error: {}".format(expt))
+        finally:
+            if err == True:
+                frame = pd.DataFrame(data=data, columns=['abbrev', 'fullname', 'campus_id'])
+                frame.to_json('./data/subject_name_data.json')
+                self.logger.info("course_name_scrap script worked fine")
+            else:
+                self.logger.info("course_name_scrap failed")
+                print("An error was noticed in the script. Program shall be terminating")
+                sys.exit()

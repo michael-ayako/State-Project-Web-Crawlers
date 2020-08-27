@@ -7,10 +7,9 @@ from scrap.course_name_scrap import course_names
 
 
 class courses:
-    def __init__(self):
-        self.subject_name_data = []
-        self.course_data = []
-        self.course_details = []
+    def __init__(self, logger):
+        self.logger = logger
+
 
     def rcid_constructor(self,len,campusid):
         if len == 3:
@@ -54,20 +53,8 @@ class courses:
         elif len == 1:
             return "00000"+str(courseid)
 
-
-    def fetch_course_data(self):
-        static_ = static()
-        course_data, url, uri = [], [], []
-        campuses = static_.campusid
-        size = (self.subject_name_data.abbrev).size
-
-        for campus in campuses:
-            for x in range(size):
-                if campus == int(self.subject_name_data['campus_id'][x]):
-                    urls = self.makesearchpageurl(str(campus), str(static_.yrtr), self.subject_name_data['abbrev'][x])
-                    url.append([urls, campus])
-
-        print("Fetching course urls...")
+    def create_uri(self, url, yrtr):
+        uri = []
         for urls, campus in tqdm(url):
             html_doc = requests.get(urls).content
             parsed = BeautifulSoup(html_doc, "html.parser")
@@ -75,11 +62,28 @@ class courses:
             table_rows = table.find_all('tr')
             for x in table_rows:
                 id = x.find_all('td')[1].text.strip()
-                yrtr = static_.yrtr
-                link = self.makecoursepageurls(str(campus), yrtr, id)
+                link = self.makecoursepageurls(str(campus),yrtr, id)
                 uri.append([link, campus])
+        return uri
 
 
+
+
+    def fetch_course_data(self):
+        static_ = static()
+        course_data, url, uri = [], [], []
+        campuses = static_.campusid
+        subject_name_data = pd.read_json("./data/subject_name_data.json")
+        size = (subject_name_data.abbrev).size
+
+        for campus in campuses:
+            for x in range(size):
+                if campus == int(subject_name_data['campus_id'][x]):
+                    urls = self.makesearchpageurl(str(campus), str(static_.yrtr), subject_name_data['abbrev'][x])
+                    url.append([urls, campus])
+
+        print("Fetching course urls...")
+        uri = self.create_uri(url, static_.yrtr)
 
         print("Fetching course data...")
         for urls, campus in tqdm(uri):
@@ -129,38 +133,36 @@ class courses:
 
                     alldetails = parsed.find_all('div', class_='detaildiv')
                     description = alldetails[-1].next_sibling.replace('\t', '').replace('\n', '').strip()
-                except:
+                except Exception as expt:
+                    self.logger.warning("Error: {}".format(expt))
                     res_tuition, non_res_tuition, fees, description = 'N/A', 'N/A', 'N/A', 'N/A'
 
                 data = [id, subj, number, sec, term, year, title, dates, day, urls, times, crd, status, instructor,
                         offered_through, campus, location, res_tuition, non_res_tuition, fees, yrtr,
                         description, campus_id]
                 course_data.append(data)
-            except:
-                pass
+            except Exception as expt:
+                self.logger.warning("Error: {}".format(expt))
+        return course_data
 
-
-
-        self.course_data = pd.DataFrame(data=course_data,
+    def __main__(self):
+        data = []
+        err = True
+        try:
+            data = self.fetch_course_data()
+        except Exception as expt:
+            err = False
+            self.logger.critical("Error: {}".format(expt))
+        finally:
+            if err == True:
+                frame = pd.DataFrame(data=data,
                                         columns=['id', 'subj', 'number', 'sec', 'term', 'year', 'title', 'dates',
                                                  'day', 'urls', 'times', 'crd', 'status', 'instructor','offered_through',
                                                  'campus', 'location', 'res_tuition', 'non_res_tuition', 'fees',
                                                  'yrtr', 'description', 'campus_id'])
-        self.course_data.to_json('./data/course_data.json')
+                frame.to_json('./data/course_data.json')
+                self.logger.info("courses_scrap script worked fine")
+            else:
+                self.logger.info("courses_scrap failed")
+                print("An error was occured in the courses_scrap script.")
 
-
-
-
-    def __main__(self):
-        try:
-            self.subject_name_data = pd.read_json('../data/subject_name_data.json')
-            self.course_data = pd.read_json('../data/course_data.json')
-        except:
-            if len(self.subject_name_data) == 0:
-                print('fetching course names')
-                cs = course_names()
-                cs.fetch_course_names()
-                self.subject_name_data = pd.read_json('../data/subject_name_data.json')
-            if len(self.course_data) == 0:
-                print('fetching course data...')
-                self.fetch_course_data()

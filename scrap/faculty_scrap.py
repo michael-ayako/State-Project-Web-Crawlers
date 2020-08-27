@@ -1,18 +1,16 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
-import os
 from tqdm import tqdm
 
 class faculty:
-    def __init__(self):
-        self.faculty_data = []
+    def __init__(self,logger):
+        self.logger = logger
 
     def fetch_faculty(self):
         number_of_pages = 100
         faculty_data = []
         base_url = "https://www.metrostate.edu/about/directory?full=&fname=&name=&dpt=&page="
-        # for x in tqdm(range(number_of_pages)):
         for x in tqdm(range(number_of_pages)):
             url = base_url+str(x)
             source = requests.get(url).text
@@ -36,18 +34,24 @@ class faculty:
                     break
             except:
                 break
-        self.faculty_data = pd.DataFrame(data=faculty_data, columns=['name', 'title', 'dept', 'email', 'phone',
-                                                                    'campus_id','link'])
-        self.faculty_data.to_json('./data/faculty_data.json')
+        return faculty_data
+
 
     def __main__(self):
+        data = []
+        err = True
         try:
-            os.mkdir('../data')
-            print("Data folder created")
-        except:
-            pass
-        try:
-            self.faculty_data = pd.read_json('../data/faculty_data.json')
-        except:
-            print("Fetching faculty data...")
-            self.fetch_faculty()
+            data = self.fetch_faculty()
+        except Exception as expt:
+            err = False
+            self.logger.critical("Error: {}".format(expt))
+        finally:
+            if err == True:
+                frame = pd.DataFrame(data=data, columns=['name', 'title', 'dept', 'email', 'phone',
+                                                                             'campus_id', 'link'])
+                frame.to_json('./data/faculty_data.json')
+                self.logger.info("faculty_scrap script worked fine")
+            else:
+                self.logger.info("course_name_scrap failed")
+                print("An error was noticed in the script. Program shall be terminating")
+
