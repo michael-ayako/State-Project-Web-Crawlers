@@ -1,5 +1,5 @@
-from database_code.database_load import database_load
 from scrap.ZZmain import scrap_handler
+from database_code.ZZmain import database_handler
 import logging
 import os.path as path
 import os
@@ -29,18 +29,11 @@ def __main__():
 
     scrap = scrap_handler(logging)
     scrap.__main__()
+    database_load = database_handler(logging)
+    database_load.__main__()
 
+    print(colored("The program ended at {} {}".format(date, time), 'green'))
+    logging.info("The program ended at {} {}".format(date, time))
 
-
-    # cn = course_names()
-    # cn.__main__()
-    # cs = courses()
-    # cs.__main__()
-    # ev = events()
-    # ev.__main__()
-    # db = database_load()
-    # db.__main__()
-    # jc = junction_table()
-    # jc.__main__()
 
 __main__()

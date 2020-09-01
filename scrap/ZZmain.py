@@ -4,12 +4,12 @@ from termcolor import colored
 from scrap.course_name_scrap import course_names
 from scrap.faculty_scrap import faculty
 from scrap.courses_scrap import courses
-from scrap.scrap_events import events
+from scrap.events_scrap import events
 
 
 
 class scrap_handler:
-    def __init__(self,logger):
+    def __init__(self, logger):
         self.logger = logger
 
     def course_name_scrap(self):
@@ -36,14 +36,26 @@ class scrap_handler:
         print()
         print(colored("Okay time to fetch course information", 'green'))
         try:
-            pd.read_json('../data/course_data.json')
+            pd.read_json('./data/course_data.json')
             print(colored('Seems we already have course information', 'yellow'))
         except:
             print('Fetching course information...')
             courses(self.logger).__main__()
 
+    def event_scrap(self):
+        print()
+        print(colored("Okay time to fetch event information", 'green'))
+        try:
+            pd.read_json('./data/events_data.json')
+            print(colored('Seems we already have event information', 'yellow'))
+        except:
+            print('Fetching event information...')
+            events(self.logger).__main__()
+
     def __main__(self):
         self.course_name_scrap()
         self.faculty_scrap()
         self.courses_scrap()
+        self.event_scrap()
+
 

@@ -5,22 +5,21 @@ import pandas as pd
 from tqdm import tqdm
 
 class events:
-    def __init__(self):
-        self.events_data = []
+    def __init__(self, logger):
+        self.logger = logger
 
     def fetch_events(self):
         # website: website link
         # Metrostate events
         website = "https://www.metrostate.edu/calendar?page="
         # page: page number
-        page = 3
+        page = 1
         # infinite loop
         event_data = []
-        while (page > 0):
+        for x in tqdm(range(page)):
             # fetch html page
-            website_html = BeautifulSoup(requests.get(website + "/calendar?page=" + str(page)).content, "html.parser")
+            website_html = BeautifulSoup(requests.get(website + "/calendar?page=" + str(x)).content, "html.parser")
             # if data in page presents
-
             if not bool(
                     website_html.find('div', id='block-metrostate-content').find('div', class_='alert alert-warning')):
                 # collect event data from page
@@ -35,13 +34,23 @@ class events:
             else:
                 break
             page -= 1
-
-        self.events_data = pd.DataFrame(data=event_data, columns=['campus_id', 'title', 'url', 'date'])
-        self.events_data.to_json('./data/events_data.json')
+        return event_data
 
     def __main__(self):
+        data = []
+        err = True
         try:
-            self.events_data = pd.read_json('../data/events_data.json')
-        except:
-            print("Fetching Event Data....")
-            self.fetch_events()
+            data = self.fetch_events()
+        except Exception as expt:
+            err = False
+            self.logger.critical("Error: {}".format(expt))
+        finally:
+            if err == True:
+                frame = pd.DataFrame(data = data, columns=['campus_id', 'title', 'url', 'date'])
+                frame.to_json('./data/events_data.json')
+                self.logger.info("events_script script worked fine")
+            else:
+                self.logger.info("events_script failed")
+                print("An error was noticed in the script. Program shall be terminating")
+
+

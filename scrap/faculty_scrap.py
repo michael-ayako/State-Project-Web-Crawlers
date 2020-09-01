@@ -4,7 +4,7 @@ import pandas as pd
 from tqdm import tqdm
 
 class faculty:
-    def __init__(self,logger):
+    def __init__(self, logger):
         self.logger = logger
 
     def fetch_faculty(self):
