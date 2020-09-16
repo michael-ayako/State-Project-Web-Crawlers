@@ -6,8 +6,6 @@ import os
 from termcolor import colored
 import datetime
 
-
-
 def __main__():
     now = datetime.datetime.now()
     date = now.strftime("%Y-%m-%d")
@@ -32,8 +30,8 @@ def __main__():
     database_load = database_handler(logging)
     database_load.__main__()
 
+    print()
     print(colored("The program ended at {} {}".format(date, time), 'green'))
     logging.info("The program ended at {} {}".format(date, time))
-
 
 __main__()

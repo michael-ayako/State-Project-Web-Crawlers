@@ -3,7 +3,7 @@ from static import static
 import pandas as pd
 from termcolor import colored
 from tqdm import tqdm
-import re
+
 
 class load_section_table:
     def __init__(self, logger):
@@ -60,7 +60,6 @@ class load_section_table:
                 non_res_tuition = dtype_check(data.non_res_tuition[x])
                 fees = dtype_check(data.fees[x])
                 description = data.description[x].replace("\'", "%").replace('\"', '$')
-
 
                 cursor.execute(self.data_check(campus_id, course_subject, course_number, term))
                 m = cursor.fetchone()
