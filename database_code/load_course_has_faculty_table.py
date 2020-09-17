@@ -56,7 +56,7 @@ class load_course_has_faculty_table:
             data = pd.read_json('./data/course_data.json')
             size = data.id.size
 
-            for x in tqdm(range(190, size)):
+            for x in tqdm(range(size)):
                 course_subject = data['subj'][x]
                 course_number = data['number'][x]
                 campus_id = data['campus_id'][x]
@@ -72,7 +72,6 @@ class load_course_has_faculty_table:
                             cursor.execute(self.data_check(faculty_id, course_subject, course_number, campus_id, semester))
                             m = cursor.fetchone()
                             if m == None:
-                                print(self.insert(faculty_id, course_subject, course_number, campus_id, semester))
                                 cursor.execute(self.insert(faculty_id, course_subject, course_number, campus_id, semester))
             cnx.commit()
             cnx.close()

@@ -20,20 +20,29 @@ class load_section_table:
     def update(self):
         pass
 
-    def data_check(self, campus_id, course_subject, course_number, term):
+    def dtype_check(self, input):
+        try:
+            i = float(input)
+            return i
+        except:
+            return 0
+
+
+
+    def data_check(self, campus_id, course_subject, course_number, semester):
         query = "SELECT * FROM section WHERE campus_id = '{}' AND course_subject = '{}' AND " \
-                "course_subject = '{}' AND term = '{}'"\
-            .format(campus_id, course_subject, course_number, term)
+                "course_subject = '{}' AND semester = '{}'"\
+            .format(campus_id, course_subject, course_number, semester)
         return query
 
     def insert(self, number, campus_id, term, course_subject, course_number, year, url, credits, offered_through,
-                    campus, location, res_tuition, non_res_tuition, fees,description):
+                    campus, location, res_tuition, non_res_tuition, fees,description,semester):
         query = "INSERT INTO section (number, campus_id, term, course_subject, course_number, year, url," \
                 "credits, offered_through, campus, location, resident_tuition, nonresident_tuition, fees, " \
-                "description) VALUES('{}', '{}', '{}','{}', '{}', '{}','{}' ,'{}', '{}','{}', '{}', '{}'," \
-                "'{}', '{}', '{}')"\
+                "description,semester) VALUES('{}', '{}', '{}','{}', '{}', '{}','{}' ,'{}', '{}','{}', '{}', '{}'," \
+                "'{}', '{}', '{}','{}')"\
             .format(number, campus_id, term, course_subject, course_number, year, url, credits, offered_through,
-                    campus, location, res_tuition, non_res_tuition, fees, description)
+                    campus, location, res_tuition, non_res_tuition, fees, description, semester)
         return query
 
     def __main__(self):
@@ -51,24 +60,25 @@ class load_section_table:
                 year = data.year[x]
                 url = data.urls[x]
 
-                dtype_check = lambda a: a if type(a) == "<class 'int'>" else 0
-                credits = dtype_check(data.crd[x])
+                credits = self.dtype_check(data.crd[x])
                 offered_through = data.offered_through[x]
                 campus = data.campus[x]
                 location = data.location[x]
-                res_tuition = dtype_check(data.res_tuition[x])
-                non_res_tuition = dtype_check(data.non_res_tuition[x])
-                fees = dtype_check(data.fees[x])
+                res_tuition = self.dtype_check(data.res_tuition[x])
+                non_res_tuition = self.dtype_check(data.non_res_tuition[x])
+                fees = self.dtype_check(data.fees[x])
                 description = data.description[x].replace("\'", "%").replace('\"', '$')
+                semester = data.yrtr[x]
 
-                cursor.execute(self.data_check(campus_id, course_subject, course_number, term))
+                cursor.execute(self.data_check(campus_id, course_subject, course_number, semester))
                 m = cursor.fetchone()
                 if m == None:
                     cursor.execute(self.insert(number, campus_id, term, course_subject, course_number, year,
                                                url, credits, offered_through,campus, location, res_tuition,
-                                               non_res_tuition, fees, description))
+                                               non_res_tuition, fees, description,semester))
             cnx.commit()
             cnx.close()
+
         except Exception as err:
             print(colored('Error discovered loading section table', 'red'))
             self.logger.warning("/database_code/ZZmain/load_section_table: {}".format(err))

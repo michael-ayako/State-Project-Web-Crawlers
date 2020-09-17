@@ -3,7 +3,6 @@ import requests
 from static import static
 import pandas as pd
 from tqdm import tqdm
-from scrap.course_name_scrap import course_names
 
 
 class courses:

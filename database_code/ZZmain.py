@@ -5,6 +5,7 @@ from database_code.load_subject_abrv_to_full_table import load_subject_abrv_to_f
 from database_code.load_faculty_table import load_faculty_table
 from database_code.load_course_table import load_course_table
 from database_code.load_section_table import load_section_table
+from database_code.load_times_table import load_times_table
 from database_code.load_course_has_faculty_table import load_course_has_faculty_table
 
 class database_handler:
@@ -73,6 +74,15 @@ class database_handler:
             print('Error : {}'.format(excpt))
             self.logger.warning('Error : {}'.format(excpt))
 
+    def func_load_times_table(self):
+        try:
+            print()
+            print(colored("Loading times table", 'green'))
+            load_times_table(self.logger).__main__()
+        except Exception as excpt:
+            print('Error : {}'.format(excpt))
+            self.logger.warning('Error : {}'.format(excpt))
+
     def __main__(self):
         print()
         print("Loading data to the database")
@@ -81,4 +91,5 @@ class database_handler:
         self.func_load_faculty_table()
         self.func_load_course_table()
         self.func_load_section_table()
+        self.func_load_times_table()
         self.func_load_course_has_faculty_table()

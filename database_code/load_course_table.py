@@ -25,10 +25,10 @@ class load_course_table:
                               " semester = '{}'".format(subject,number, campus_id, semester)
         return query
 
-    def insert(self, subject, number, name, description, url, campus_id, instructor, semester):
-        query = "INSERT INTO course (subject,number,name,description,url,campus_id,instructor,semester)" \
-                             "VALUES('{}','{}','{}','{}','{}','{}','{}','{}')" \
-            .format(subject, number, name, description, url, campus_id, instructor, semester)
+    def insert(self, subject, number, name, description, url, campus_id,  semester):
+        query = "INSERT INTO course (subject,number,name,description,url,campus_id,semester)" \
+                             "VALUES('{}','{}','{}','{}','{}','{}','{}')" \
+            .format(subject, number, name, description, url, campus_id,  semester)
         return query
 
     def __main__(self):
@@ -44,13 +44,12 @@ class load_course_table:
                 description = data['description'][x].replace("\'", "%").replace('\"', '$')
                 url = data['urls'][x]
                 campus_id = data['campus_id'][x]
-                instructor = data['instructor'][x].replace("\'", "%").replace('\"', '$')
                 semester = data['yrtr'][x]
 
                 cursor.execute(self.data_check(subject,number, campus_id, semester))
                 m = cursor.fetchone()
                 if m == None:
-                    cursor.execute(self.insert(subject, number, name, description, url, campus_id, instructor, semester))
+                    cursor.execute(self.insert(subject, number, name, description, url, campus_id, semester))
             cnx.commit()
             cnx.close()
         except Exception as err:
