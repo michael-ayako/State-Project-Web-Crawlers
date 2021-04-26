@@ -6,5 +6,5 @@ class static:
         self.port = '3306'
         self.database = 'cc_bot_db_dev'
         self.campusid = [76]
-        self.yrtr = 20213
+        self.yrtr = 20215
 

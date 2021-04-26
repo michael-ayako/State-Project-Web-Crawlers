@@ -57,6 +57,7 @@ class scrap_handler():
             events(self.logger).__main__()
 
     def __main__(self):
+        self.event_scrap()
         t1 = th.Thread(target=self.course_name_scrap(), name = 'course_name_scrap')
         t1.start()
         t1.join()
