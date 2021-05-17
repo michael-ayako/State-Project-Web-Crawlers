@@ -1,8 +1,10 @@
 #Ignoring the data folder
-/data/*.json
-/SQL/
-/SSL Certs/
-/.vscode/
-/.idea/
-/__pycache__/
-/logs/
+data/*.json
+SQL/
+SSL Certs/
+.vscode/
+.idea/
+__pycache__/
+logs/
+scrap/__pycache__/
+database_code/__pycache__/
