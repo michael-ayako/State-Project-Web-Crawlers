@@ -1,2 +1,8 @@
 #Ignoring the data folder
-data/
+/data/*.json
+/SQL/
+/SSL Certs/
+/.vscode/
+/.idea/
+/__pycache__/
+/logs/
